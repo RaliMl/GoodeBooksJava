@@ -47,6 +47,19 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>1.4.2.Final</version> <!-- Use the latest version available -->
+		</dependency>
+
+		<!-- MapStruct annotation processor for code generation -->
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct-processor</artifactId>
+			<version>1.4.2.Final</version> <!-- Use the same version as the core library -->
+			<scope>provided</scope>
+		</dependency>
 	</dependencies>
 
 
