@@ -5,6 +5,8 @@ import com.bookstore.demo.domain.accounts.model.AccountCreateDTO;
 import com.bookstore.demo.domain.accounts.model.AccountGetDTO;
 import com.bookstore.demo.domain.accounts.repository.AccountRepository;
 import com.bookstore.demo.domain.accounts.service.AccountServiceImpl;
+import com.bookstore.demo.domain.roles.entity.Role;
+import com.bookstore.demo.domain.roles.repository.RoleRepository;
 import com.bookstore.demo.exceptions.EmailException;
 import com.bookstore.demo.infrastructure.mapper.AccountMapper;
 import lombok.SneakyThrows;
@@ -41,20 +43,28 @@ public class AccountServiceTest {
     private AccountRepository accountRepository;
     @Mock
     private AccountMapper accountMapper;
+    @Mock
+    private RoleRepository roleRepository;
+
     @InjectMocks
     private AccountServiceImpl accountService;
 
     private AccountCreateDTO accountDTO;
     private Account account;
     private AccountGetDTO accountGetDTO;
+    private Role role;
 
 
     @BeforeEach
     public void Init() {
-        accountDTO = new AccountCreateDTO("rml@gmail.com", "Ralitsa MLadenova", "lala123@");
-        account = new Account("rml@gmail.com", "Ralitsa MLadenova", "lala123@");
+        accountDTO = new AccountCreateDTO("rml@gmail.com", "Ralitsa MLadenova", "lala123@", 2L);
+        account = new Account("rml@gmail.com", "Ralitsa MLadenova", "lala123@", 2L);
         account.setId(1L);
-        accountGetDTO = new AccountGetDTO(1L, "rml@gmail.com", "Ralitsa MLadenova");
+        accountGetDTO = new AccountGetDTO(1L, "rml@gmail.com", "Ralitsa MLadenova", 2L);
+        role = new Role();
+        role.setId(2L);
+        role.setName("PROVIDER_ADMIN");
+
     }
 
     @Test
@@ -64,6 +74,8 @@ public class AccountServiceTest {
         when(accountRepository.save(any(Account.class))).thenReturn(account);
 
         when(accountMapper.accountToAccountGetDTO(any(Account.class))).thenReturn(accountGetDTO);
+
+        when(roleRepository.findById(anyLong())).thenReturn(Optional.of(role));
 
         AccountGetDTO created = accountService.create(accountDTO);
         assertThat(created.fullName(), is(accountMapper.accountCreateDTOToAccount(accountDTO).getFullName()));
@@ -107,27 +119,47 @@ public class AccountServiceTest {
     @SneakyThrows
     @Test
     void givenValidAccount_whenUpdating_thenOK() {
-        Long id = 1L;
-        Account account1 = new Account("rml@gmail.com", "Ralitsa MLadenova", "lala123@");
-        Account newAcc = new Account("rml@gmail.com", "Deyana MLadenova", "lala123@");
+        Account account1 = new Account("rml@gmail.com", "Ralitsa MLadenova", "lala123@", role);
+        Account newAcc = new Account("rml@gmail.com", "Deyana MLadenova", "lala123@", role);
 
         when(accountRepository.findById(anyLong())).thenReturn(Optional.of(account1));
 
         doNothing().when(accountMapper).updateAccountFromDto(any(AccountCreateDTO.class), any(Account.class));
 
-        AccountCreateDTO accountDTO1 = new AccountCreateDTO("rml@gmail.com", "Deyana MLadenova", "lala123@");
+        AccountCreateDTO accountDTO1 = new AccountCreateDTO("rml@gmail.com", "Deyana MLadenova", "lala123@", 2L);
         accountService.update(accountDTO1, 1L);
         assertThat(newAcc.getFullName(), is(accountDTO1.fullName()));
         Mockito.verify(accountRepository).save(account1);
     }
 
     @Test
-    void givenInvalidAccountEmail_whenUpdating_thenEmailException() {
-        Account account = new Account("dml@gmail.com", "Ralitsa MLadenova", "lala123@");
+    void givenValidRoleID_whenUpdating_thenOK() {
+        Role role2 = new Role();
+        role2.setId(1L);
+        role2.setName("PROVIDER_ADMIN");
+        Account newAcc = new Account("rml@gmail.com", "Deyana MLadenova", "lala123@", role2);
+        newAcc.setId(1L);
 
         when(accountRepository.findById(anyLong())).thenReturn(Optional.of(account));
 
-        AccountCreateDTO accountDTO = new AccountCreateDTO("rml@gmail.com", "Deyana MLadenova", "lala123@");
+        doNothing().when(accountMapper).updateAccountFromDto(any(AccountCreateDTO.class), any(Account.class));
+
+        when(roleRepository.findById(anyLong())).thenReturn(Optional.of(role));
+
+        AccountCreateDTO accountCreateDTO = new AccountCreateDTO("rml@gmail.com", "Deyana MLadenova", "lala123@", 1L);
+        accountService.update(accountCreateDTO, 1L);
+        assertThat(newAcc.getRole().getId(), is(accountCreateDTO.roleID()));
+        Mockito.verify(accountRepository).save(account);
+
+    }
+
+    @Test
+    void givenInvalidAccountEmail_whenUpdating_thenEmailException() {
+        Account account = new Account("dml@gmail.com", "Ralitsa MLadenova", "lala123@", role);
+
+        when(accountRepository.findById(anyLong())).thenReturn(Optional.of(account));
+
+        AccountCreateDTO accountDTO = new AccountCreateDTO("rml@gmail.com", "Deyana MLadenova", "lala123@", 2L);
         Exception exception = assertThrows(EmailException.class, () -> {
             accountService.update(accountDTO, 1L);
         });
