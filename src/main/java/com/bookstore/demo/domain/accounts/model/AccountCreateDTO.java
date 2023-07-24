@@ -11,7 +11,8 @@ public record AccountCreateDTO(
         String fullName,
         @NotBlank
         @Pattern(regexp = "(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=_]).{8,20}", message = "The entered password is invalid!")
-        String password
+        String password,
+        Long roleID
 
 ) {
 }

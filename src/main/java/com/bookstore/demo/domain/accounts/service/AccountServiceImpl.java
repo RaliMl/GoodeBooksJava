@@ -4,6 +4,8 @@ import com.bookstore.demo.domain.accounts.entity.Account;
 import com.bookstore.demo.domain.accounts.model.AccountCreateDTO;
 import com.bookstore.demo.domain.accounts.model.AccountGetDTO;
 import com.bookstore.demo.domain.accounts.repository.AccountRepository;
+import com.bookstore.demo.domain.roles.entity.Role;
+import com.bookstore.demo.domain.roles.repository.RoleRepository;
 import com.bookstore.demo.exceptions.EmailException;
 import com.bookstore.demo.infrastructure.mapper.AccountMapper;
 import org.springframework.data.domain.Page;
@@ -16,10 +18,12 @@ import javax.persistence.EntityNotFoundException;
 public class AccountServiceImpl implements AccountService{
     public final AccountMapper accountMapper;
     public final AccountRepository accountRepository;
+    public final RoleRepository roleRepository;
 
-    public AccountServiceImpl(AccountMapper accountMapper, AccountRepository accountRepository) {
+    public AccountServiceImpl(AccountMapper accountMapper, AccountRepository accountRepository, RoleRepository roleRepository) {
         this.accountMapper = accountMapper;
         this.accountRepository = accountRepository;
+        this.roleRepository = roleRepository;
     }
 
     private Account findAccountByID(Long id){
@@ -27,8 +31,15 @@ public class AccountServiceImpl implements AccountService{
     }
     @Override
     public AccountGetDTO create(AccountCreateDTO accountDTO) {
+        Long id = accountDTO.roleID();
+        Role role = roleRepository.findById(id).orElseThrow();
+
+
         Account account = accountMapper.accountCreateDTOToAccount(accountDTO);
+        account.setRole(role);
+
         Account createdProject = accountRepository.save(account);
+
         return accountMapper.accountToAccountGetDTO(createdProject);
     }
 
@@ -51,6 +62,12 @@ public class AccountServiceImpl implements AccountService{
         Account currentAccount = findAccountByID(id);
         if (!account.email().equals(currentAccount.getEmail()))
             throw new EmailException("Email connot be updated!");
+
+        if(account.roleID() != currentAccount.getRole().getId()){
+            Role role = roleRepository.findById(account.roleID()).orElseThrow();
+            currentAccount.setRole(role);
+        }
+
 
         accountMapper.updateAccountFromDto(account, currentAccount);
         accountRepository.save(currentAccount);

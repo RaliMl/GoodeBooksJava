@@ -9,7 +9,7 @@ public record AccountGetDTO(
         String email,
         @NotBlank
         @Pattern(regexp = "(?=.*[A-Z])(?=.*[a-z])(?=.*[-'])*.{3,}", message = "The entered name is invalid!")
-        String fullName
-
+        String fullName,
+        Long role
 ) {
 }
