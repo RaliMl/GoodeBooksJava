@@ -188,7 +188,7 @@ public class AccountServiceTest {
         Exception exception = assertThrows(EntityNotFoundException.class, () -> {
             accountService.delete(id);
         });
-        String expectedMessage = "Account not found!";
+        String expectedMessage = "The account was not found!";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }

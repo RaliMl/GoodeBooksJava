@@ -27,7 +27,7 @@ public class AccountServiceImpl implements AccountService{
     }
 
     private Account findAccountByID(Long id){
-        return accountRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Account was not found!"));
+        return accountRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("The account was not found!"));
     }
     @Override
     public AccountGetDTO create(AccountCreateDTO accountDTO) {
@@ -79,7 +79,7 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public void delete(Long id) {
         if (!accountRepository.existsById(id)) {
-            throw new EntityNotFoundException("Account not found!");
+            throw new EntityNotFoundException("The account was not found!");
         }
         accountRepository.deleteById(id);
     }
