@@ -2,7 +2,6 @@ package com.bookstore.demo.domain.books.entity;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.List;
 
 @Entity
 public class Book {
@@ -17,8 +16,6 @@ public class Book {
     public int pageCount;
     @Column(nullable = false)
     public String language;
-    @Column(nullable = false)
-    public List<String> authors;
 
     public Long getId() {
         return id;
@@ -54,11 +51,5 @@ public class Book {
     }
     public void setLanguage(String language) {
         this.language = language;
-    }
-    public List<String> getAuthors() {
-        return authors;
-    }
-    public void setAuthors(List<String> authors) {
-        this.authors = authors;
     }
 }
