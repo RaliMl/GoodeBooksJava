@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @Service
 public interface BookService {
     BookGetDTO create(BookCreateDTO book);
-    BookGetDTO getById(Long id) throws Exception;
+    BookGetDTO getById(Long id);
 
     Page<BookGetDTO> get(Pageable pageable);
 

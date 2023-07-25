@@ -32,11 +32,11 @@ public class BookServiceImpl implements BookService{
 
         Book createdBook = bookRepository.save(book);
 
-        return bookMapper.bookToBookgetDTO(book);
+        return bookMapper.bookToBookgetDTO(createdBook);
     }
 
     @Override
-    public BookGetDTO getById(Long id) throws Exception {
+    public BookGetDTO getById(Long id) {
 
         return bookMapper.bookToBookgetDTO(findBookById(id));
     }

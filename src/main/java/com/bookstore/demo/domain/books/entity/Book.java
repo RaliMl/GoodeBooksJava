@@ -13,9 +13,17 @@ public class Book {
     @Column(nullable = false)
     private LocalDate publishedDate;
     @Column(nullable = false)
-    public int pageCount;
+    private int pageCount;
     @Column(nullable = false)
-    public String language;
+    private String language;
+
+    public Book(Long id, String title, LocalDate publishedDate, int pageCount, String language) {
+        this.id = id;
+        this.title = title;
+        this.publishedDate = publishedDate;
+        this.pageCount = pageCount;
+        this.language = language;
+    }
 
     public Long getId() {
         return id;
