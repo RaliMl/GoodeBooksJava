@@ -1,5 +1,6 @@
 package com.bookstore.demo.domain.book;
 
+import com.bookstore.demo.domain.authors.entity.Author;
 import com.bookstore.demo.domain.books.entity.Book;
 import com.bookstore.demo.domain.books.model.BookCreateDTO;
 import com.bookstore.demo.domain.books.model.BookGetDTO;
@@ -46,12 +47,16 @@ public class BookServiceTest {
     private Book book;
     private BookGetDTO bookGetDTO;
     private BookCreateDTO bookCreateDTO;
+    private List<Author> authors;
 
+    private List<Long> authorIds;
     @BeforeEach
     public void Init() {
-        book = new Book(1L, "Albatross", LocalDate.of(2019, 10, 10), 300, "English");
-        bookCreateDTO = new BookCreateDTO("Albatross", LocalDate.of(2019, 10, 10), 300, "English");
-        bookGetDTO = new BookGetDTO(1L, "Albatross", LocalDate.of(2019, 10, 10), 300, "English");
+        book = new Book(1L, "Albatross", LocalDate.of(2019, 10, 10), 300, "English", authors);
+        authorIds = new ArrayList<>();
+        authorIds.add(1L);
+        bookCreateDTO = new BookCreateDTO("Albatross", LocalDate.of(2019, 10, 10), 300, "English", authorIds);
+        bookGetDTO = new BookGetDTO(1L, "Albatross", LocalDate.of(2019, 10, 10), 300, "English", authorIds);
     }
     @Test
     void givenValidBook_whenSaving_thenOK() {
@@ -96,8 +101,8 @@ public class BookServiceTest {
     }
     @Test
     void givenValidAccount_whenUpdating_thenOK() {
-        Book newBook = new Book(1L, "Albatross", LocalDate.of(2018, 10, 10), 300, "English");
-        BookCreateDTO newBookCreateDTO = new BookCreateDTO("Albatross", LocalDate.of(2018, 10, 10), 300, "English");
+        Book newBook = new Book(1L, "Albatross", LocalDate.of(2018, 10, 10), 300, "English", authors);
+        BookCreateDTO newBookCreateDTO = new BookCreateDTO("Albatross", LocalDate.of(2018, 10, 10), 300, "English", authorIds);
 
         when(bookRepository.findById(anyLong())).thenReturn(Optional.of(book));
 
