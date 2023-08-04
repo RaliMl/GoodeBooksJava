@@ -32,7 +32,7 @@ public class AuthorServiceImpl implements AuthorService{
     @Override
     public AuthorGetDTO create(AuthorCreateDTO authorDTO) {
         Author author = authorMapper.authorCreateDTOToAuthor(authorDTO);
-        List<Book> books = bookRepository.findBooksByIds(authorDTO.books());
+        List<Book> books = bookRepository.findByIdIn(authorDTO.books());
         author.setBooks(books);
 
         authorRepository.save(author);
@@ -60,7 +60,7 @@ public class AuthorServiceImpl implements AuthorService{
         Author currentAuthor = findAuthorById(id);
         authorMapper.updateAuthorFromDTO(authorDTO, currentAuthor);
 
-        List<Book> books = bookRepository.findBooksByIds(authorDTO.books());
+        List<Book> books = bookRepository.findByIdIn(authorDTO.books());
         currentAuthor.setBooks(books);
 
         authorRepository.save(currentAuthor);
