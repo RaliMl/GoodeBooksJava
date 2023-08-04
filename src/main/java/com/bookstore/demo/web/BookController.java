@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,16 +20,19 @@ public class BookController {
         this.bookService = bookService;
     }
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BookGetDTO> create (@RequestBody BookCreateDTO bookDTO) {
         return ResponseEntity.ok(bookService.create(bookDTO));
     }
 
     @GetMapping
+    @PreAuthorize("hastAnyRole('ROLE_ADMIN', 'ROLE_CLIENT')")
     public ResponseEntity<Page<BookGetDTO>> get(Pageable pageable) {
         return  ResponseEntity.ok(bookService.get(pageable));
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BookGetDTO> getById(@PathVariable Long id) throws Exception {
 
         BookGetDTO task = bookService.getById(id);
@@ -36,6 +40,7 @@ public class BookController {
 
     }
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<BookCreateDTO> update(@RequestBody BookCreateDTO account, @PathVariable Long id) {
 
         bookService.update(account, id);
@@ -44,6 +49,7 @@ public class BookController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
         bookService.delete(id);
         return ResponseEntity.noContent().build();
