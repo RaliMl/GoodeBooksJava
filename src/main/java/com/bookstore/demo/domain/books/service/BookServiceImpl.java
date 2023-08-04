@@ -1,5 +1,7 @@
 package com.bookstore.demo.domain.books.service;
 
+import com.bookstore.demo.domain.authors.entity.Author;
+import com.bookstore.demo.domain.authors.repository.AuthorRepository;
 import com.bookstore.demo.domain.books.entity.Book;
 import com.bookstore.demo.domain.books.model.BookCreateDTO;
 import com.bookstore.demo.domain.books.model.BookGetDTO;
@@ -10,15 +12,19 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityNotFoundException;
+import java.util.List;
 
 @Service
 public class BookServiceImpl implements BookService{
     private final BookMapper bookMapper;
     private final BookRepository bookRepository;
 
-    public BookServiceImpl(BookMapper bookMapper, BookRepository bookRepository) {
+    private final AuthorRepository authorRepository;
+
+    public BookServiceImpl(BookMapper bookMapper, BookRepository bookRepository, AuthorRepository authorRepository) {
         this.bookMapper = bookMapper;
         this.bookRepository = bookRepository;
+        this.authorRepository = authorRepository;
     }
 
     private Book findBookById(Long id) {
@@ -29,6 +35,12 @@ public class BookServiceImpl implements BookService{
     public BookGetDTO create(BookCreateDTO bookDTO) {
 
         Book book = bookMapper.bookCreateDTOToBook(bookDTO);
+        List<Author> authorsList = authorRepository.findByIdIn(bookDTO.authors());
+        book.setAuthors(authorsList);
+
+        for (Author author : authorsList) {
+            author.getBooks().add(book);
+        }
 
         Book createdBook = bookRepository.save(book);
 

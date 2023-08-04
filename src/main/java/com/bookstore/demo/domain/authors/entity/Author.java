@@ -12,13 +12,16 @@ public class Author {
     private Long id;
     @Column(nullable = false)
     private String name;
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "author_book",
-            joinColumns = @JoinColumn(name = "author_id"),
-            inverseJoinColumns = @JoinColumn(name = "book_id")
+            joinColumns = @JoinColumn(name = "author_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "book_id",referencedColumnName = "id")
     )
     private List<Book> books;
+
+    public Author() {
+    }
 
     public Author(Long id, String name, List<Book> books) {
         this.id = id;

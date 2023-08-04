@@ -19,8 +19,11 @@ public class Book {
     private int pageCount;
     @Column(nullable = false)
     private String language;
-    @ManyToMany(mappedBy = "books")
+    @ManyToMany(mappedBy = "books", cascade = CascadeType.ALL)
     private List<Author> authors;
+
+    public Book() {
+    }
 
     public Book(Long id, String title, LocalDate publishedDate, int pageCount, String language, List<Author> authors) {
         this.id = id;

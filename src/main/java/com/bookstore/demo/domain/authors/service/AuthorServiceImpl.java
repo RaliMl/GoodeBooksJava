@@ -35,6 +35,10 @@ public class AuthorServiceImpl implements AuthorService{
         List<Book> books = bookRepository.findByIdIn(authorDTO.books());
         author.setBooks(books);
 
+        for (Book book : books) {
+            book.getAuthors().add(author);
+        }
+
         authorRepository.save(author);
 
         return authorMapper.authorToAuthorGetDTO(author);
