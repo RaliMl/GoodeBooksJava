@@ -3,6 +3,7 @@ package com.bookstore.demo.domain.authors.entity;
 import com.bookstore.demo.domain.books.entity.Book;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -29,6 +30,11 @@ public class Author {
         this.books = books;
     }
 
+    public Author(Long id, String name) {
+        this.id = id;
+        this.name = name;
+        this.books = new ArrayList<>();
+    }
     public Long getId() {
         return id;
     }

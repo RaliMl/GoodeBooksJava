@@ -33,6 +33,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.EntityNotFoundException;
 
@@ -45,6 +46,8 @@ public class AccountServiceTest {
     private AccountMapper accountMapper;
     @Mock
     private RoleRepository roleRepository;
+    @Mock
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private AccountServiceImpl accountService;
@@ -53,6 +56,7 @@ public class AccountServiceTest {
     private Account account;
     private AccountGetDTO accountGetDTO;
     private Role role;
+    private String encodedPass;
 
 
     @BeforeEach
@@ -76,6 +80,8 @@ public class AccountServiceTest {
         when(accountMapper.accountToAccountGetDTO(any(Account.class))).thenReturn(accountGetDTO);
 
         when(roleRepository.findById(anyLong())).thenReturn(Optional.of(role));
+
+        when(passwordEncoder.encode(any(CharSequence.class))).thenReturn(encodedPass);
 
         AccountGetDTO created = accountService.create(accountDTO);
         assertThat(created.fullName(), is(accountMapper.accountCreateDTOToAccount(accountDTO).getFullName()));
@@ -163,7 +169,7 @@ public class AccountServiceTest {
         Exception exception = assertThrows(EmailException.class, () -> {
             accountService.update(accountDTO, 1L);
         });
-        String expectedMessage = "Email connot be updated!";
+        String expectedMessage = "Email cannot be updated!";
         String actualMessage = exception.getMessage();
         assertTrue(actualMessage.contains(expectedMessage));
     }

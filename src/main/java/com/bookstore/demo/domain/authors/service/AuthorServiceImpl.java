@@ -46,7 +46,7 @@ public class AuthorServiceImpl implements AuthorService{
     }
 
     @Override
-    public AuthorGetDTO getById(Long id) throws Exception {
+    public AuthorGetDTO getById(Long id) {
         return authorMapper.authorToAuthorGetDTO(findAuthorById(id));
     }
 
