@@ -1,6 +1,7 @@
 package com.bookstore.demo.domain.book;
 
 import com.bookstore.demo.domain.authors.entity.Author;
+import com.bookstore.demo.domain.authors.repository.AuthorRepository;
 import com.bookstore.demo.domain.books.entity.Book;
 import com.bookstore.demo.domain.books.model.BookCreateDTO;
 import com.bookstore.demo.domain.books.model.BookGetDTO;
@@ -39,6 +40,8 @@ public class BookServiceTest {
     @Mock
     private BookRepository bookRepository;
     @Mock
+    private AuthorRepository authorRepository;
+    @Mock
     private BookMapper bookMapper;
 
     @InjectMocks
@@ -52,6 +55,8 @@ public class BookServiceTest {
     private List<Long> authorIds;
     @BeforeEach
     public void Init() {
+        authors  = new ArrayList<>();
+        authors.add(new Author(1L, "Terry Fallis"));
         book = new Book(1L, "Albatross", LocalDate.of(2019, 10, 10), 300, "English", authors);
         authorIds = new ArrayList<>();
         authorIds.add(1L);
@@ -61,6 +66,8 @@ public class BookServiceTest {
     @Test
     void givenValidBook_whenSaving_thenOK() {
         when(bookMapper.bookCreateDTOToBook(any(BookCreateDTO.class))).thenReturn(book);
+
+        when(authorRepository.findByIdIn(any(List.class))).thenReturn(authors);
 
         when(bookRepository.save(any(Book.class))).thenReturn(book);
 
@@ -84,7 +91,7 @@ public class BookServiceTest {
         verify(bookRepository).findById(id);
     }
     @Test
-    void givenValidID_whenGetAll_thenOK() {
+    void whenGetAll_thenOK() {
         Pageable pageable = PageRequest.of(0, 20);
         List<Book> books = new ArrayList<>();
         books.add(book);
@@ -100,7 +107,7 @@ public class BookServiceTest {
         assertThat(list.get(0).title(), is(book.getTitle()));
     }
     @Test
-    void givenValidAccount_whenUpdating_thenOK() {
+    void givenValidBook_whenUpdating_thenOK() {
         Book newBook = new Book(1L, "Albatross", LocalDate.of(2018, 10, 10), 300, "English", authors);
         BookCreateDTO newBookCreateDTO = new BookCreateDTO("Albatross", LocalDate.of(2018, 10, 10), 300, "English", authorIds);
 

@@ -33,6 +33,13 @@ public class Book {
         this.language = language;
         this.authors = authors;
     }
+    public Book(Long id, String title, LocalDate publishedDate, int pageCount, String language) {
+        this.id = id;
+        this.title = title;
+        this.publishedDate = publishedDate;
+        this.pageCount = pageCount;
+        this.language = language;
+    }
 
     public Long getId() {
         return id;
